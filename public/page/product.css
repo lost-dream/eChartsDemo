@@ -1,0 +1,63 @@
+body {
+    padding: 30px 30px 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
+.controller {
+    height: 40px;
+}
+#foo, #bar{
+    padding:0 25px;
+    color: #999999;
+}
+.controller  .el-button-group {
+    margin-right: 45px;
+}
+
+.controller .el-button-group .el-button {
+    padding: 0 10px;
+    color: #333333;
+}
+
+.el-date-editor{
+    width:205px;
+}
+.controller .search{
+    margin-left: 20px;
+}
+.histogram{
+    padding: 60px 0;
+}
+.histogram-item{
+    width:500px;
+    height:310px;
+}
+.histogram.linechart .histogram-item{
+    width:100%;
+    height:500px;
+}
+.el-table{
+    margin: 0 auto 20px;
+}
+.el-table .cell{
+    text-align: center;
+}
+
+.range-datepicker{
+    width:300px;
+}
+
+.el-checkbox-group{
+    padding:30px 0;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.change-type{
+    text-align: center;
+    margin-bottom: 20px;
+}
+

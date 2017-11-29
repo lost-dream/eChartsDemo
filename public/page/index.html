@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>echart + vue + elementui 统计图</title>
+
+    <!-- vue -->
+    <script src="../asset/vue.min.js"></script>
+    <script src="../asset/axios.min.js"></script>
+    <!-- jquery -->
+    <script src="../asset/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+    <!-- elementUI -->
+    <link rel="stylesheet" href="../asset/element-ui-2.0.5.min.css">
+    <script src="../asset/element-ui-2.0.5.min.js"></script>
+    <!-- echarts -->
+    <script src="../asset/echart.min.js"></script>
+    <!-- base -->
+    <link rel="stylesheet" type="text/css" href="../asset/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="product.css"/>
+    <script src="product.js"></script>
+</head>
+
+<body>
+<div id="app" v-cloak>
+    <el-row>
+        <el-col>
+            <el-button @click="hidden=false">查看柱状图</el-button>
+            <el-button @click="hidden=true">查看折线图</el-button>
+        </el-col>
+    </el-row>
+    <el-row v-show="!hidden">
+        <el-col>
+            <el-row>
+                <el-col :span="24" class="controller">
+                    <el-button-group>
+                        <el-button type="text" @click="todayHistogram">今天</el-button>
+                        <el-button type="text" @click="yesterdayHistogram">昨天</el-button>
+                        <el-button type="text" @click="weekendHistogram">最近7天</el-button>
+                        <el-button type="text" @click="mounthHistogram">最近30天</el-button>
+                    </el-button-group>
+                    <el-date-picker
+                            v-model="datePicker1"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            @change="getChangeDate"
+                    >
+                    </el-date-picker>
+                    <el-button type="primary" class="search" @click="pageDataSearch">查询</el-button>
+                </el-col>
+            </el-row>
+            <el-row class="histogram">
+                <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                    <div class="histogram-item" id="histogram1"></div>
+                </el-col>
+                <el-col :xs="24" :sm="24" :md="12" :lg="12">
+                    <div class="histogram-item" id="histogram2"></div>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-checkbox-group
+                            v-model="checkList"
+                            :max="5"
+                            @change="handleCheckedChange">
+                        <el-checkbox v-for="item in checkbox" :label="item" :key="item">{{item}}</el-checkbox>
+                    </el-checkbox-group>
+                </el-col>
+            </el-row>
+        </el-col>
+    </el-row>
+    <el-row v-show="hidden">
+        <el-col>
+            <el-row>
+                <el-col :span="24" class="controller">
+                    <el-button-group>
+                        <el-button type="text" @click="weekendLineChart">最近7天</el-button>
+                        <el-button type="text" @click="harfMounthLineChart">最近15天</el-button>
+                        <el-button type="text" @click="mounthLineChart">最近30天</el-button>
+                    </el-button-group>
+                    <el-date-picker
+                            v-model="datePicker2"
+                            type="daterange"
+                            align="right"
+                            unlink-panels
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期"
+                            @change="getChangeDate"
+                    >
+                    </el-date-picker>
+                    <el-button type="primary" class="search" @click="pageDataSearch2">查询</el-button>
+                </el-col>
+            </el-row>
+            <el-row class="histogram linechart">
+                <el-col :xs="24" :sm="24" :md="24" :lg="24">
+                    <div class="histogram-item" id="lineChart1"></div>
+                </el-col>
+                <el-col :xs="24" :sm="24" :md="24" :lg="24">
+                    <div class="histogram-item" id="lineChart2"></div>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col>
+                    <el-checkbox-group
+                            v-model="checkList"
+                            :max="5"
+                            @change="handleCheckedChange2">
+                        <el-checkbox v-for="item in checkbox" :label="item" :key="item">{{item}}</el-checkbox>
+                    </el-checkbox-group>
+                </el-col>
+            </el-row>
+        </el-col>
+    </el-row>
+    <el-table :data="tablePageData" style="width:1000px" height="500" border="true">
+        <el-table-column fixed prop="date" label="日期" width="120">
+        </el-table-column>
+        <el-table-column label="主页">
+            <el-table-column prop="home_pv" label="PV">
+            </el-table-column>
+            <el-table-column prop="home_uv" label="UV">
+            </el-table-column>
+        </el-table-column>
+        <el-table-column label="登陆">
+            <el-table-column prop="login_pv" label="PV">
+            </el-table-column>
+            <el-table-column prop="login_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="注册">
+            <el-table-column prop="registered_pv" label="PV"></el-table-column>
+            <el-table-column prop="registered_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="下载">
+            <el-table-column prop="download_pv" label="PV"></el-table-column>
+            <el-table-column prop="download_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="活动页">
+            <el-table-column prop="loan_market_pv" label="PV"></el-table-column>
+            <el-table-column prop="loan_market_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="推荐">
+            <el-table-column prop="home_credit_pv" label="PV"></el-table-column>
+            <el-table-column prop="home_credit_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="超市">
+            <el-table-column prop="home_credit_pv" label="PV"></el-table-column>
+            <el-table-column prop="home_credit_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="信用卡">
+            <el-table-column prop="banner_pv" label="PV"></el-table-column>
+            <el-table-column prop="banner_uv" label="UV"></el-table-column>
+        </el-table-column>
+        <el-table-column label="报告">
+            <el-table-column prop="home_loan_pv" label="PV"></el-table-column>
+            <el-table-column prop="home_loan_uv" label="UV"></el-table-column>
+        </el-table-column>
+    </el-table>
+</div>
+</body>
+</html>
